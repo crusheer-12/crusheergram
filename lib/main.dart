@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,12 +22,62 @@ class CrusheergramApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.black,
         primaryColor: Colors.blue,
       ),
-      home: const Scaffold(
-        body: SafeArea(
-          child: ProfileScreen(),
+      home: const MainLayout(),
+      debugShowCheckedModeBanner: false,
+    );
+  }
+}
+
+// الكلاس المسؤول عن التنقل والشريط السفلي مثل إنستغرام
+class MainLayout extends StatefulWidget {
+  const MainLayout({Key? key}) : super(key: key);
+
+  @override
+  State<MainLayout> createState() => _MainLayoutState();
+}
+
+class _MainLayoutState extends State<MainLayout> {
+  int _selectedIndex = 4; // نبدأ بـ 4 ليكون الحساب الشخصي هو الافتراضي عند الفتح
+
+  // قائمة الشاشات (حالياً نضع نصوص مؤقتة وباقي الشاشات لحين برمجتها)
+  final List<Widget> _screens = [
+    const Center(child: Text('Home Screen', style: TextStyle(color: Colors.white, fontSize: 24))),
+    const Center(child: Text('Search Screen', style: TextStyle(color: Colors.white, fontSize: 24))),
+    const Center(child: Text('Add Post Screen', style: TextStyle(color: Colors.white, fontSize: 24))),
+    const Center(child: Text('Reels Screen', style: TextStyle(color: Colors.white, fontSize: 24))),
+    const ProfileScreen(), // شاشتك السينمائية الفخمة
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(child: _screens[_selectedIndex]),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          border: Border(top: BorderSide(color: Colors.grey[900]!, width: 0.5)),
+        ),
+        child: BottomNavigationBar(
+          currentIndex: _selectedIndex,
+          onTap: (index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+          },
+          type: BottomNavigationBarType.fixed,
+          backgroundColor: Colors.black,
+          selectedItemColor: Colors.white,
+          unselectedItemColor: Colors.grey[600],
+          showSelectedLabels: false, // إنستغرام لا يعرض نصوص أسفل الأيقونات
+          showUnselectedLabels: false,
+          items: const [
+            BottomNavigationBarItem(icon: Icon(Icons.home_filled, size: 28), label: 'Home'),
+            BottomNavigationBarItem(icon: Icon(Icons.search, size: 28), label: 'Search'),
+            BottomNavigationBarItem(icon: Icon(Icons.add_box_outlined, size: 28), label: 'Add'),
+            BottomNavigationBarItem(icon: Icon(Icons.slideshow_rounded, size: 28), label: 'Reels'),
+            BottomNavigationBarItem(icon: Icon(Icons.person_pin, size: 28), label: 'Profile'),
+          ],
         ),
       ),
-      debugShowCheckedModeBanner: false,
     );
   }
 }
