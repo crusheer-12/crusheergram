@@ -25,10 +25,21 @@ jobs:
       - name: Install Dependencies
         run: |
           if [ ! -f pubspec.yaml ]; then
+            # لحفظ كود فلاتر الأصلي الخاص بك مؤقتاً
+            mkdir -p temp_lib
+            cp lib/main.dart temp_lib/main.dart
+            
+            # إنشاء هيكلية المشروع بالكامل
             flutter create . --overwrite --org com.crusheer --project-name crusheergram
+            
+            # استعادة كودك الأصلي ووضعه في مكانه الصحيح المتكامل
             rm -f lib/main.dart
-            mv main.dart lib/
+            mv temp_lib/main.dart lib/main.dart
+            rm -rf temp_lib
           fi
+          
+          # إضافة مكتبات Firebase الضرورية لكودك لكي ينجح التجميع
+          flutter pub add firebase_core cloud_firestore
           flutter pub get
 
       - name: Build APK
