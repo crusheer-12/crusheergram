@@ -201,6 +201,7 @@ class _MainLayoutState extends State<MainLayout> {
 // ==========================================
 
 // شاشة الصفحة الرئيسية (Home Feed)
+// شاشة الصفحة الرئيسية التي تسحب البيانات مباشرة من Firebase
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
@@ -209,35 +210,35 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: const Text('Crusheergram', style: TextStyle(fontSize: 24, fontStyle: FontStyle.italic, fontWeight: FontWeight.bold)),
-        actions: [
-          IconButton(icon: const Icon(Icons.favorite_border), onPressed: () {}),
-          IconButton(icon: const Icon(Icons.chat_bubble_outline), onPressed: () {}),
-        ],
+        title: const Text('Crusheergram', style: TextStyle(fontStyle: FontStyle.italic)),
       ),
-      body: ListView.builder(
-        itemCount: 5,
-        itemBuilder: (context, index) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ListTile(
-                leading: const CircleAvatar(backgroundColor: Colors.grey, child: Icon(Icons.person, color: Colors.white)),
-                title: Text('User_${index + 1}', style: const TextStyle(fontWeight: FontWeight.bold)),
-                trailing: const Icon(Icons.more_vert),
-              ),
-              Image.network('https://picsum.photos/id/${index + 130}/400/400', fit: BoxFit.cover, width: double.infinity, height: 350),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    IconButton(icon: const Icon(Icons.favorite_border), onPressed: () {}),
-                    IconButton(icon: const Icon(Icons.comment_outlined), onPressed: () {}),
-                    IconButton(icon: const Icon(Icons.send_outlined), onPressed: () {}),
-                  ],
-                ),
-              ),
-            ],
+      body: StreamBuilder(
+        // نقوم بالاتصال بـ مجموعة "posts" في Firebase
+        stream: FirebaseFirestore.instance.collection('posts').snapshots(),
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          return ListView.builder(
+            itemCount: snapshot.data!.docs.length,
+            itemBuilder: (context, index) {
+              var post = snapshot.data!.docs[index];
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ListTile(
+                    leading: CircleAvatar(backgroundImage: NetworkImage(post['userImage'])),
+                    title: Text(post['username'], style: const TextStyle(fontWeight: FontWeight.bold)),
+                  ),
+                  Image.network(post['postImage'], fit: BoxFit.cover, width: double.infinity),
+                  Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Text(post['caption'], style: const TextStyle(color: Colors.white)),
+                  ),
+                  const SizedBox(height: 10),
+                ],
+              );
+            },
           );
         },
       ),
