@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'services/firestore_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -215,7 +216,7 @@ class HomeScreen extends StatelessWidget {
       ),
       body: StreamBuilder(
         // نقوم بالاتصال بـ مجموعة "posts" في Firebase
-        stream: FirebaseFirestore.instance.collection('posts').snapshots(),
+        stream: FirestoreService().getPosts(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
