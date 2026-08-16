@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'services/firestore_service.dart';
+import 'services/firestore_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -152,14 +153,13 @@ class _MainLayoutState extends State<MainLayout> {
     );
   }
 
-  void _addNewPost() {
-    setState(() {
-      _posts.insert(0, 'https://picsum.photos/id/${DateTime.now().second + 150}/300/300');
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('New cinematic post uploaded successfully!')),
-    );
-  }
+  void _addNewPost() async {
+  await FirestoreService().createDemoPost();
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(content: Text('Post published successfully!')),
+  );
+}
 
   @override
   Widget build(BuildContext context) {
