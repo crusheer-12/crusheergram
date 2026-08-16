@@ -2,7 +2,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
-
+Future<void> createDemoPost() async {
+  await _db.collection('posts').add({
+    'username': 'crusheer-12',
+    'userImage': 'https://picsum.photos/100',
+    'postImage': 'https://picsum.photos/600',
+    'caption': 'My new post on CrusheerGram 🚀',
+    'createdAt': FieldValue.serverTimestamp(),
+  });
+}
+  
   Stream<QuerySnapshot<Map<String, dynamic>>> getPosts() {
     return _db
         .collection('posts')
